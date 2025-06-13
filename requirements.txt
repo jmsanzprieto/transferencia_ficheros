@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+python-multipart
+python-jose[cryptography]
+argon2-cffi
+SQLAlchemy
+pydantic-sqlalchemy
+sqlalchemy-utils
+python-dotenv
