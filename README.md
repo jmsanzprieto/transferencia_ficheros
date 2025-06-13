@@ -6,10 +6,14 @@ Esta API FastAPI permite la **carga y descarga segura de archivos**, con un enfo
 ---
 
 ## Características Principales
-* **Carga de archivos**: Soporta la subida de archivos .
-* **Descarga de archivos**: Permite la recuperación de archivos específicos por su UUID.
-* **Autenticación de usuarios**: Implementa un sistema de autenticación basado en tokens (OAuth2/JWT) para proteger los endpoints.
-* **Estructura modular**: Diseñado para ser extensible y fácil de mantener.
+* **Autenticación de usuarios**: Implementa un sistema de autenticación basado en tokens JWT (JSON Web Tokens) usando OAuth2 para proteger los endpoints.
+* **Registro de usuarios**: Permite a nuevos usuarios registrarse con email y contraseña.
+* **Gestión de contraseñas segura**: Las contraseñas de los usuarios se almacenan de forma segura utilizando el algoritmo de hashing Argon2.
+* **Carga de archivos**: Permite la subida de archivos, con validaciones de tamaño y tipo de archivo.
+* **Descarga de archivos**: Permite la recuperación de archivos específicos por un UUID único. Los archivos se sirven y, opcionalmente, se limpian del servidor después de la descarga.
+* **Persistencia de datos**: Utiliza SQLite como base de datos para almacenar registros de usuarios y archivos, gestionada a través de SQLAlchemy.
+* **Documentación automática**: Genera automáticamente interfaces de documentación interactiva (Swagger UI y Redoc).
+* **Frontend básico**: Incluye una página de inicio de sesión simple con Jinja2.
 
 ---
 
@@ -29,7 +33,7 @@ Sigue estos pasos para poner la API en marcha en tu entorno local:
     git clone [https://github.com/tu_usuario/tu_proyecto.git](https://github.com/tu_usuario/tu_proyecto.git)
     cd tu_proyecto
     ```
-    (Reemplaza `tu_usuario/tu_proyecto` con la URL real de tu repositorio)
+    *(Reemplaza `tu_usuario/tu_proyecto` con la URL real de tu repositorio)*
 
 2.  **Crea y activa un entorno virtual** (recomendado para aislar las dependencias):
     ```bash
@@ -42,28 +46,25 @@ Sigue estos pasos para poner la API en marcha en tu entorno local:
 
 3.  **Instala las dependencias** del proyecto:
     ```bash
-    pip install -r requeriments.txt
+    pip install -r requirements.txt
     ```
+    (El archivo `requirements.txt` se generará por separado con todas las dependencias necesarias).
 
-4.  **Configura las variables de entorno** (si las usas para secretos como `SECRET_KEY` o credenciales de base de datos). Puedes crear un archivo `.env` en la raíz del proyecto y cargarlo con `python-dotenv`.
-   ```bash
-   # Puedes generar una usando: openssl rand -hex 32
-SECRET_KEY = "hash_para_cifrar_el_jwt" 
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-# Base de datos
-# Puedes usar una base de datos SQLite o PostgreSQL
-DATABASE_URL="sqlite:///./sql_app.db"
-
-# configuración de subida de archivos
-UPLOAD_DIRECTORY = "uploaded_files" # Carpeta donde se guardarán los archivos
-MAX_FILE_SIZE_MB = 10 # 10 MB
-ALLOWED_FILE_TYPES = "application/pdf" # Solo PDFs
-
-# url app
-APP_URL="http://127.0.0.1:8000/" # URL de la aplicación, cambiar si es necesario
-
+4.  **Configura las variables de entorno**:
+    Crea un archivo `.env` en la raíz de tu proyecto con el siguiente contenido:
     ```
+    SECRET_KEY="tu_super_secreto_para_jwt_cambialo"
+    ACCESS_TOKEN_EXPIRE_MINUTES=30
+    DATABASE_URL="sqlite:///./sql_app.db"
+    APP_URL="http://localhost:8000/" # Asegúrate que coincida con la URL de tu app
+    MAX_FILE_SIZE_MB=10 # Tamaño máximo de archivo permitido en MB
+    ALLOWED_FILE_TYPES="application/pdf,image/jpeg,image/png,text/plain" # Tipos MIME permitidos (separados por comas)
+    UPLOAD_DIRECTORY="uploaded_files" # Directorio donde se guardarán los archivos subidos
+    ```
+    **¡Importante!** Cambia `tu_super_secreto_para_jwt_cambialo` por una cadena larga y segura.
+
+5.  **Crea el directorio de subidas**:
+    Asegúrate de que el directorio especificado en `UPLOAD_DIRECTORY` (por defecto `uploaded_files`) exista en la raíz de tu proyecto. Puedes crearlo manualmente o se creará automáticamente cuando la aplicación intente guardar el primer archivo.
 
 ---
 
@@ -71,7 +72,7 @@ APP_URL="http://127.0.0.1:8000/" # URL de la aplicación, cambiar si es necesari
 
 ### 1. Iniciar la aplicación
 
-Ejecuta la API usando Uvicorn:
+Ejecuta la API usando Uvicorn desde la raíz de tu proyecto:
 
 ```bash
 uvicorn main:app --reload
