@@ -42,12 +42,28 @@ Sigue estos pasos para poner la API en marcha en tu entorno local:
 
 3.  **Instala las dependencias** del proyecto:
     ```bash
-    pip install "fastapi[all]" uvicorn python-multipart
-    # Si usas JWT para la autenticación, también necesitarás:
-    # pip install python-jose[cryptography] passlib[bcrypt]
+    pip install -r requeriments.txt
     ```
 
 4.  **Configura las variables de entorno** (si las usas para secretos como `SECRET_KEY` o credenciales de base de datos). Puedes crear un archivo `.env` en la raíz del proyecto y cargarlo con `python-dotenv`.
+   ```bash
+   # Puedes generar una usando: openssl rand -hex 32
+SECRET_KEY = "hash_para_cifrar_el_jwt" 
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+# Base de datos
+# Puedes usar una base de datos SQLite o PostgreSQL
+DATABASE_URL="sqlite:///./sql_app.db"
+
+# configuración de subida de archivos
+UPLOAD_DIRECTORY = "uploaded_files" # Carpeta donde se guardarán los archivos
+MAX_FILE_SIZE_MB = 10 # 10 MB
+ALLOWED_FILE_TYPES = "application/pdf" # Solo PDFs
+
+# url app
+APP_URL="http://127.0.0.1:8000/" # URL de la aplicación, cambiar si es necesario
+
+    ```
 
 ---
 
